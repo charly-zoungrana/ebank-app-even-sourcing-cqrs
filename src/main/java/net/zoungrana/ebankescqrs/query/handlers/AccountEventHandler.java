@@ -10,12 +10,12 @@ import net.zoungrana.ebankescqrs.query.repository.AccountOperationRepository;
 import net.zoungrana.ebankescqrs.query.repository.AccountRepository;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.eventhandling.EventMessage;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 @RequiredArgsConstructor
 @Slf4j
-public class AccountHandler {
+public class AccountEventHandler {
     private final AccountRepository accountRepository;
     private final AccountOperationRepository accountOperationRepository;
 
