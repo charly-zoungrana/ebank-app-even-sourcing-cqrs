@@ -3,8 +3,10 @@ package net.zoungrana.ebankescqrs.commands.controllers;
 import lombok.RequiredArgsConstructor;
 import net.zoungrana.ebankescqrs.commands.commands.AddAccountCommand;
 import net.zoungrana.ebankescqrs.commands.commands.CreditAccountCommand;
+import net.zoungrana.ebankescqrs.commands.commands.DebitAccountCommand;
 import net.zoungrana.ebankescqrs.commands.dtos.AddAccountRequestDTO;
 import net.zoungrana.ebankescqrs.commands.dtos.CreditAccountRequestDTO;
+import net.zoungrana.ebankescqrs.commands.dtos.DebitAccountRequestDTO;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.springframework.web.bind.annotation.*;
@@ -36,12 +38,24 @@ public class AccountCommandController {
     @PostMapping("/credit")
     public  CompletableFuture<String> creditAccount(@RequestBody CreditAccountRequestDTO requestDTO){
 
-        CreditAccountCommand createAccountCommand= new CreditAccountCommand(
+        CreditAccountCommand creditAccountCommand= new CreditAccountCommand(
                 requestDTO.accountId(),
                 requestDTO.amount(),
                 requestDTO.currency());
 
-        CompletableFuture<String> response = commandGateway.send(createAccountCommand);
+        CompletableFuture<String> response = commandGateway.send(creditAccountCommand);
+        return response;
+    }
+
+    @PostMapping("/debit")
+    public  CompletableFuture<String> debitAccount(@RequestBody DebitAccountRequestDTO requestDTO){
+
+        DebitAccountCommand debitAccountCommand= new DebitAccountCommand(
+                requestDTO.accountId(),
+                requestDTO.amount(),
+                requestDTO.currency());
+
+        CompletableFuture<String> response = commandGateway.send(debitAccountCommand);
         return response;
     }
 
