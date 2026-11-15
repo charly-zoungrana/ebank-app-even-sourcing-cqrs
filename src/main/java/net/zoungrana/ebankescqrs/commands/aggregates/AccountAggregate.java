@@ -2,8 +2,10 @@ package net.zoungrana.ebankescqrs.commands.aggregates;
 
 import lombok.extern.slf4j.Slf4j;
 import net.zoungrana.ebankescqrs.commands.commands.AddAccountCommand;
+import net.zoungrana.ebankescqrs.commands.commands.CreditAccountCommand;
 import net.zoungrana.ebankescqrs.enums.AccountStatus;
 import net.zoungrana.ebankescqrs.events.AccountCreatedEvent;
+import net.zoungrana.ebankescqrs.events.AccountCreditedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -29,12 +31,11 @@ public class AccountAggregate {
         if(command.getInitialBalance()<0) throw new IllegalArgumentException("Initial balance must be positive");
 
         AggregateLifecycle.apply(
-                AccountCreatedEvent.builder()
-                        .id(command.getId())
-                        .initialBalance(command.getInitialBalance())
-                        .currency(command.getCurrency())
-                        .status(AccountStatus.CREATED)
-                        .build()
+              new AccountCreatedEvent(
+                      command.getId(),
+                      command.getInitialBalance(),
+                      command.getCurrency(),
+                      AccountStatus.CREATED)
         );
     }
 
@@ -45,5 +46,24 @@ public class AccountAggregate {
         this.balance = event.getInitialBalance();
         this.status = event.getStatus();
         this.currency = event.getCurrency();
+    }
+
+    @CommandHandler
+    public void handle(CreditAccountCommand command){
+        log.info("############### Crediting account with id: {} ####################", command.getAccountId());
+        if(!status.equals(AccountStatus.ACTIVATED)) throw new RuntimeException("The Account " + command.getAccountId() + " is not activated");
+        if(command.getAmount()<0) throw new IllegalArgumentException("Amount must be positive");
+        AggregateLifecycle.apply(new AccountCreditedEvent(
+                command.getAccountId(),
+                command.getAmount(),
+                command.getCurrency()
+        ));
+
+    }
+
+    @EventSourcingHandler
+    public void on(AccountCreditedEvent event){
+        log.info("############### Account credited event was received with id: {} ####################", event.getAccountId());
+        this.balance+=event.getAmount();
     }
 }
