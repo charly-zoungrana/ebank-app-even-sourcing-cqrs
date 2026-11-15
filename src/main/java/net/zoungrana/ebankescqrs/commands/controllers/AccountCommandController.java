@@ -4,9 +4,11 @@ import lombok.RequiredArgsConstructor;
 import net.zoungrana.ebankescqrs.commands.commands.AddAccountCommand;
 import net.zoungrana.ebankescqrs.commands.commands.CreditAccountCommand;
 import net.zoungrana.ebankescqrs.commands.commands.DebitAccountCommand;
+import net.zoungrana.ebankescqrs.commands.commands.UpdateAccountStatusCommand;
 import net.zoungrana.ebankescqrs.commands.dtos.AddAccountRequestDTO;
 import net.zoungrana.ebankescqrs.commands.dtos.CreditAccountRequestDTO;
 import net.zoungrana.ebankescqrs.commands.dtos.DebitAccountRequestDTO;
+import net.zoungrana.ebankescqrs.commands.dtos.UpdateAccountStatusRequestDTO;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventsourcing.eventstore.EventStore;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +33,7 @@ public class AccountCommandController {
                 requestDTO.initialBalance(),
                 requestDTO.currency());
 
-        CompletableFuture<String> response = commandGateway.send(createAccountCommand);
-        return response;
+       return commandGateway.send(createAccountCommand);
     }
 
     @PostMapping("/credit")
@@ -43,8 +44,8 @@ public class AccountCommandController {
                 requestDTO.amount(),
                 requestDTO.currency());
 
-        CompletableFuture<String> response = commandGateway.send(creditAccountCommand);
-        return response;
+       return commandGateway.send(creditAccountCommand);
+
     }
 
     @PostMapping("/debit")
@@ -55,8 +56,18 @@ public class AccountCommandController {
                 requestDTO.amount(),
                 requestDTO.currency());
 
-        CompletableFuture<String> response = commandGateway.send(debitAccountCommand);
-        return response;
+        return commandGateway.send(debitAccountCommand);
+
+    }
+
+    @PutMapping("/updateAccountStatus")
+    public CompletableFuture<String> updateAccountStatus(@RequestBody UpdateAccountStatusRequestDTO requestDTO){
+        UpdateAccountStatusCommand updateAccountStatusCommand=new UpdateAccountStatusCommand(
+                requestDTO.accountId(),
+                requestDTO.status()
+        );
+
+        return commandGateway.send(updateAccountStatusCommand);
     }
 
     @GetMapping("/events/{accountId}")

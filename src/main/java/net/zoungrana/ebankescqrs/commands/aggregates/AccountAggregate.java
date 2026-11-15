@@ -4,11 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import net.zoungrana.ebankescqrs.commands.commands.AddAccountCommand;
 import net.zoungrana.ebankescqrs.commands.commands.CreditAccountCommand;
 import net.zoungrana.ebankescqrs.commands.commands.DebitAccountCommand;
+import net.zoungrana.ebankescqrs.commands.commands.UpdateAccountStatusCommand;
 import net.zoungrana.ebankescqrs.enums.AccountStatus;
-import net.zoungrana.ebankescqrs.events.AccountActivatedEvent;
-import net.zoungrana.ebankescqrs.events.AccountCreatedEvent;
-import net.zoungrana.ebankescqrs.events.AccountCreditedEvent;
-import net.zoungrana.ebankescqrs.events.AccountDebitedEvent;
+import net.zoungrana.ebankescqrs.events.*;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -99,5 +97,22 @@ public class AccountAggregate {
     public void on(AccountDebitedEvent event){
         log.info("############### Account debited event was received with id: {} ####################", event.getAccountId());
         this.balance-=event.getAmount();
+    }
+
+    @CommandHandler
+    public void handle(UpdateAccountStatusCommand command){
+        log.info("############### Updating account status with id: {} ####################", command.getAccountId());
+        if(status.equals(command.getStatus())) throw new RuntimeException("The Account "+command.getAccountId() + "is already " + command.getStatus());
+        if(command.getStatus().equals(AccountStatus.CREATED)) throw new RuntimeException("The Account "+command.getAccountId() + "cannot be " + command.getStatus());
+        AggregateLifecycle.apply(new UpdateAccountStatusEvent(
+                command.getAccountId(),
+                command.getStatus()
+        ));
+    }
+
+    @EventSourcingHandler
+    public void on(UpdateAccountStatusEvent event){
+        log.info("############### Account status updated event was received with id: {} ####################", event.getAccountId());
+        this.status=event.getStatus();
     }
 }
