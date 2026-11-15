@@ -10,6 +10,7 @@ import net.zoungrana.ebankescqrs.query.repository.AccountOperationRepository;
 import net.zoungrana.ebankescqrs.query.repository.AccountRepository;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.eventhandling.EventMessage;
+import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class AccountEventHandler {
     private final AccountRepository accountRepository;
     private final AccountOperationRepository accountOperationRepository;
+    private final QueryUpdateEmitter queryUpdateEmitter;
 
     @EventHandler
     public void on(AccountCreatedEvent event, EventMessage eventMessage){
@@ -62,6 +64,7 @@ public class AccountEventHandler {
 
         account.setBalance(account.getBalance()-accountOperation.getAmount());
         accountOperationRepository.save(accountOperation);
+        queryUpdateEmitter.emit(e->true,accountOperation);
     }
 
     @EventHandler
@@ -78,6 +81,7 @@ public class AccountEventHandler {
 
         account.setBalance(account.getBalance() + accountOperation.getAmount());
         accountOperationRepository.save(accountOperation);
+        queryUpdateEmitter.emit(e->true,accountOperation);
     }
 
 }

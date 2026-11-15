@@ -6,6 +6,7 @@ import net.zoungrana.ebankescqrs.query.entities.Account;
 import net.zoungrana.ebankescqrs.query.entities.AccountOperation;
 import net.zoungrana.ebankescqrs.query.queries.GetAccountStatementQuery;
 import net.zoungrana.ebankescqrs.query.queries.GetAllAccountQuery;
+import net.zoungrana.ebankescqrs.query.queries.WatchEventQuery;
 import net.zoungrana.ebankescqrs.query.repository.AccountOperationRepository;
 import net.zoungrana.ebankescqrs.query.repository.AccountRepository;
 import org.axonframework.queryhandling.QueryHandler;
@@ -29,5 +30,10 @@ public class AccountQueryHandler {
         Account account=accountRepository.findById(query.getAccountId()).orElseThrow(()->new RuntimeException("Account not found"));
         List<AccountOperation> accountOperations=accountOperationRepository.findByAccountId(query.getAccountId());
         return new AccountStatementResponseDTO(account,accountOperations);
+    }
+
+    @QueryHandler
+    public AccountOperation on(WatchEventQuery query){
+        return AccountOperation.builder().build();
     }
 }
