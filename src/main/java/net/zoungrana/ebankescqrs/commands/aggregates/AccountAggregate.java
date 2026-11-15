@@ -104,14 +104,14 @@ public class AccountAggregate {
         log.info("############### Updating account status with id: {} ####################", command.getAccountId());
         if(status.equals(command.getStatus())) throw new RuntimeException("The Account "+command.getAccountId() + "is already " + command.getStatus());
         if(command.getStatus().equals(AccountStatus.CREATED)) throw new RuntimeException("The Account "+command.getAccountId() + "cannot be " + command.getStatus());
-        AggregateLifecycle.apply(new UpdateAccountStatusEvent(
+        AggregateLifecycle.apply(new AccountStatusUpdatedEvent(
                 command.getAccountId(),
                 command.getStatus()
         ));
     }
 
     @EventSourcingHandler
-    public void on(UpdateAccountStatusEvent event){
+    public void on(AccountStatusUpdatedEvent event){
         log.info("############### Account status updated event was received with id: {} ####################", event.getAccountId());
         this.status=event.getStatus();
     }

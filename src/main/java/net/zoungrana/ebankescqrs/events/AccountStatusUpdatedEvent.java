@@ -6,12 +6,12 @@ import lombok.Getter;
 import net.zoungrana.ebankescqrs.enums.AccountStatus;
 
 @Getter
-public class UpdateAccountStatusEvent {
+public class AccountStatusUpdatedEvent {
     private String accountId;
     private AccountStatus status;
 
     @JsonCreator
-    public UpdateAccountStatusEvent(
+    public AccountStatusUpdatedEvent(
             @JsonProperty("accountId") String accountId,
             @JsonProperty("status") AccountStatus status) {
         this.accountId = accountId;
