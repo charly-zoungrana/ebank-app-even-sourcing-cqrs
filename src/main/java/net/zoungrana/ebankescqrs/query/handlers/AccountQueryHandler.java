@@ -10,11 +10,11 @@ import net.zoungrana.ebankescqrs.query.queries.WatchEventQuery;
 import net.zoungrana.ebankescqrs.query.repository.AccountOperationRepository;
 import net.zoungrana.ebankescqrs.query.repository.AccountRepository;
 import org.axonframework.queryhandling.QueryHandler;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-@Service
+@Component
 @RequiredArgsConstructor
 public class AccountQueryHandler {
     private final AccountRepository accountRepository;

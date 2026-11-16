@@ -11,9 +11,10 @@ import net.zoungrana.ebankescqrs.query.repository.AccountRepository;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.eventhandling.EventMessage;
 import org.axonframework.queryhandling.QueryUpdateEmitter;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
-@Service
+
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class AccountEventHandler {
@@ -61,9 +62,9 @@ public class AccountEventHandler {
                 .currency(event.getCurrency())
                 .account(account)
                 .build();
-
-        account.setBalance(account.getBalance()-accountOperation.getAmount());
         accountOperationRepository.save(accountOperation);
+        account.setBalance(account.getBalance()-accountOperation.getAmount());
+        accountRepository.save(account);
         queryUpdateEmitter.emit(e->true,accountOperation);
     }
 
@@ -79,8 +80,9 @@ public class AccountEventHandler {
                 .account(account)
                 .build();
 
-        account.setBalance(account.getBalance() + accountOperation.getAmount());
         accountOperationRepository.save(accountOperation);
+        account.setBalance(account.getBalance() + accountOperation.getAmount());
+        accountRepository.save(account);
         queryUpdateEmitter.emit(e->true,accountOperation);
     }
 
