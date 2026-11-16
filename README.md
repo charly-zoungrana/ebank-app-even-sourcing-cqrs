@@ -128,4 +128,4 @@ La reprise a consisté à arrêter l’application, à retirer uniquement le tok
 
 ## Supports du TP
 
-[Présentation de CQRS et de l’Event Sourcing](https://www.youtube.com/watch?v=AVpyvoJI4Cc) · [Démonstration pratique de Mohamed Youssfi](https://www.youtube.com/watch?v=ZxE9mbvu0og)
+[Présentation de CQRS et de l’Event Sourcing](https://www.youtube.com/watch?v=AVpyvoJI4Cc) · [Démonstration pratique de Prof Mohamed Youssfi](https://www.youtube.com/watch?v=ZxE9mbvu0og)
